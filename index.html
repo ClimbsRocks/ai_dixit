@@ -1,16 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Dixit</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="js/main.js" defer></script>
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-storage.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js"></script>
+    <script type="module" src="js/main.js" defer></script>
 </head>
+
 <body class="bg-gray-100 min-h-screen p-8">
     <div class="max-w-4xl mx-auto">
         <h1 class="text-4xl font-bold text-center mb-8">AI Dixit</h1>
@@ -42,67 +39,3 @@
     </div>
 </body>
 </html> 
-
-<script type="module">
-  // Import Firebase SDK
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.1/firebase-app.js";
-  import { getStorage } from "https://www.gstatic.com/firebasejs/11.4.1/firebase-storage.js";
-  import { getFirestore } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
-
-  // Your web app's Firebase configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyDM3tC1gt92wC1gt92wEO",
-    authDomain: "your-project.firebaseapp.com",
-    projectId: "your-project-id",
-    storageBucket: "your-project.appspot.com",
-    messagingSenderId: "546570462966",
-    appId: "1:546570462966:web:3059eacbc9b4c1b1f1aed7"
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const storage = getStorage(app);
-  const db = getFirestore(app);
-</script>
-
-<script type="module">
-  function uploadImage(file) {
-    const storageRef = storage.ref('images/' + Date.now() + '_' + file.name);
-    return storageRef.put(file).then(snapshot => snapshot.ref.getDownloadURL());
-  }
-</script>
-
-<script type="module">
-  function submitImage(file) {
-    uploadImage(file).then(url => {
-      db.collection('images').add({
-        url: url,
-        votes: 0,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-      });
-    });
-  }
-</script>
-
-<script type="module">
-  db.collection('images').orderBy('timestamp').onSnapshot(snapshot => {
-    const gallery = document.getElementById('imageGallery');
-    gallery.innerHTML = '';
-    snapshot.forEach(doc => {
-      const imgData = doc.data();
-      const img = document.createElement('img');
-      img.src = imgData.url;
-      img.className = 'rounded shadow-md';
-      gallery.appendChild(img);
-    });
-  });
-</script>
-
-<script type="module">
-  function vote(imageId) {
-    const imageRef = db.collection('images').doc(imageId);
-    imageRef.update({
-      votes: firebase.firestore.FieldValue.increment(1)
-    });
-  }
-</script>
